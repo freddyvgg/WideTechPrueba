@@ -5,11 +5,16 @@ import android.os.Parcelable;
 
 public class User implements Parcelable{
 	
+	public static final String ID = "ID";
 	public static final String FNAME = "FNAME";
 	public static final String LNAME = "LNAME";
+	public static final String NAME = "NAME";
+	public static final String LASTNAME = "LASTNAME";
 	public static final String PHONE = "PHONE";
 	public static final String EMAIL = "EMAIL";
-	public static final String ID = "ID";
+	public static final String ADDRESS = "ADDRESS";
+	public static final String PASSWORD = "PASSWORD";
+	
 	
 	
 	/**
@@ -40,20 +45,23 @@ public class User implements Parcelable{
 		}
 	 */
 	
-	private String id, fname, lname, phone, email;
+	private String id, fname, lname, phone, email, address, password;
 
 	public User() {
 		super();
 	}
 
 	public User(String id, String fname, String lname, String phone,
-			String email) {
+			String email, String address, String password) {
 		super();
 		this.id = id;
 		this.fname = fname;
 		this.lname = lname;
 		this.phone = phone;
 		this.email = email;
+		this.address = address;
+		this.password = password;
+		
 	}
 	
 	
@@ -64,6 +72,8 @@ public class User implements Parcelable{
 		this.lname = in.readString();
 		this.phone = in.readString();
 		this.email = in.readString();
+		this.address = in.readString();
+		this.password = in.readString();
 	}
 	
 	public User(Main main)
@@ -77,9 +87,11 @@ public class User implements Parcelable{
 					this.id = gp.getValue();
 					break;
 				case FNAME:
+				case NAME:
 					this.fname = gp.getValue();
 					break;
 				case LNAME:
+				case LASTNAME:
 					this.lname = gp.getValue();
 					break;
 				case PHONE:
@@ -87,6 +99,12 @@ public class User implements Parcelable{
 					break;
 				case EMAIL:
 					this.email = gp.getValue();
+					break;
+				case ADDRESS:
+					this.address = gp.getValue();
+					break;
+				case PASSWORD:
+					this.password = gp.getValue();
 					break;
 			}
 		}
@@ -133,8 +151,22 @@ public class User implements Parcelable{
 	}
 	
 	
-	
-	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", fname=" + fname + ", lname=" + lname
@@ -153,6 +185,8 @@ public class User implements Parcelable{
 		dest.writeString(lname);
 		dest.writeString(phone);
 		dest.writeString(email);
+		dest.writeString(address);
+		dest.writeString(password);
 		
 	}
 

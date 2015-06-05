@@ -5,19 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import co.widetech.widetechprueba.operations.DetailOperations;
 import co.widetech.widetechprueba.operations.Operations;
+import co.widetech.widetechprueba.operations.SignUpOperations;
 import co.widetech.widetechprueba.to.User;
 import co.widetech.widetechprueba.utils.RetainedFragmentManager;
 
-public class DetailActivity extends Activity {
+public class SignUpActivity extends Activity {
 	
-	public static final String VIEW_DETAIL_ACTION = "co.widetech.widetechprueba.activities.DetailActivity";
+	public static final String VIEW_SIGNUP_ACTION = "co.widetech.widetechprueba.activities.SignUpActivity";
 	
 	private RetainedFragmentManager mRetainedFragmentManager = 
 	        new RetainedFragmentManager(this.getFragmentManager(),
@@ -27,7 +23,7 @@ public class DetailActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("Detail", "onCreate");
+		Log.d("SignUpActivity", "onCreate");
 		super.onCreate(savedInstanceState);
 		handleConfigurationChanges();
 	}
@@ -35,7 +31,7 @@ public class DetailActivity extends Activity {
 	private void handleConfigurationChanges() {
 		if(mRetainedFragmentManager.firstTimeIn())
 		{
-			mOperations = new DetailOperations(this);
+			mOperations = new SignUpOperations(this);
 			mRetainedFragmentManager.put(Operations.OPERATIONS, mOperations);
 		}
 		else
@@ -44,7 +40,7 @@ public class DetailActivity extends Activity {
 			
 			if(mOperations==null)
 			{
-				mOperations = new DetailOperations(this);
+				mOperations = new SignUpOperations(this);
 				mRetainedFragmentManager.put(Operations.OPERATIONS, mOperations);
 			}else{
 				mOperations.onConfigurationChange(this);
@@ -57,28 +53,8 @@ public class DetailActivity extends Activity {
 		mOperations.onButtonPressed(view);
 	}
 
-	
-	
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		return mOperations.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		return mOperations.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onBackPressed() {
-		mOperations.onBackPressed();
-	}
-
 	public static Intent makeIntent(Context context, User user) {
-		Intent intent = new Intent(VIEW_DETAIL_ACTION);
+		Intent intent = new Intent(VIEW_SIGNUP_ACTION);
 		intent.putExtra("USER", user);
 		return intent;
 	}

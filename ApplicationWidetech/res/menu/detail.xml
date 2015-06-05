@@ -3,9 +3,12 @@
     tools:context="co.widetech.widetechprueba.MainActivity" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:id="@+id/update_menu"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:title="@string/update"/>
+    <item
+        android:id="@+id/logout_menu"
+        android:showAsAction="never"
+        android:title="@string/logout"/>
 
 </menu>

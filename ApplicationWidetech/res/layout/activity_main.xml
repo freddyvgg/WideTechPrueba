@@ -21,11 +21,26 @@
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:inputType="textPassword" />
-        <Button 
-            android:id="@+id/login_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login"
-            android:onClick="onButtonPressed"/>
+        <LinearLayout 
+        	android:orientation="horizontal"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content">
+	        <Button 
+	            android:id="@+id/login_button"
+	            android:layout_weight="1"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:text="@string/login"
+	            android:onClick="onButtonPressed"/>
+	        
+	        <Button 
+	            android:id="@+id/singup_button"
+	            android:layout_weight="1"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:text="@string/signup"
+	            android:onClick="onButtonPressed"/>
+        
+        </LinearLayout>
         
 </LinearLayout>

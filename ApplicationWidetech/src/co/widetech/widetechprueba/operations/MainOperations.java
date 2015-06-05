@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import co.widetech.widetechprueba.R;
 import co.widetech.widetechprueba.activities.DetailActivity;
+import co.widetech.widetechprueba.activities.SignUpActivity;
 import co.widetech.widetechprueba.to.GP;
 import co.widetech.widetechprueba.to.Main;
 import co.widetech.widetechprueba.to.User;
@@ -45,6 +46,18 @@ public class MainOperations extends Operations {
 					mActive = true;
 					Main request = buildLoginRequest();
 					callWebService(request);
+				}
+			}
+		});
+		
+		putButtonCommand(R.id.singup_button, new ButtonCommand() {
+			
+			@Override
+			public void execute(View view) {
+				if(!mActive){
+					mActive = true;
+					Intent intent = SignUpActivity.makeIntent(getActivity(), null);
+					getActivity().startActivity(intent);
 				}
 			}
 		});
@@ -107,9 +120,7 @@ public class MainOperations extends Operations {
 			if(result.getResponse().getCode()==0)
 			{
 				Intent intent = DetailActivity.makeIntent(getActivity(), new User(result));
-				Log.d(TAG, "Before activity");
 				getActivity().startActivity(intent);
-				Log.d(TAG, "After activity");
 				resetViewFields();
 			}else{
 				showDialogError(result.getResponse().getDesc());
@@ -147,7 +158,7 @@ public class MainOperations extends Operations {
 
 				@Override
 				protected Main doInBackground(Main... params) {
-					return Utils.callWebService(params[0]);
+					return Utils.callWebServiceDummy(params[0]);
 				}
 				
 				@Override

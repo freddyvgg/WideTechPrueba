@@ -1,6 +1,7 @@
 package co.widetech.widetechprueba.utils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +80,41 @@ public class Utils {
             
            return result;
 	}
+    
+    public static Main callWebServiceDummy(Main request) {
+    	Log.d(TAG, "callWebService Utils called");
+    	final Main result;
+		String response = "{\"GP\":["+
+							"{\"Name\":\"USR\",\"Value\":\"taxi\"},"+
+							"{\"Name\":\"PASS\",\"Value\":\"taxi\"},"+
+							"{\"Name\":\"CLIENTEID\",\"Value\":\"33047\"},"+
+							"{\"Name\":\"PHONE\",\"Value\":\"3103117143\"},"+
+							"{\"Name\":\"FNAME\",\"Value\":\"Adriana\"},"+
+							"{\"Name\":\"LNAME\",\"Value\":\"Mendez\"},"+
+							"{\"Name\":\"EMAIL\",\"Value\":\"dmendez@widetech.com.co\"},"+
+							"{\"Name\":\"PASSWORD\",\"Value\":\"12345\"},"+
+							"{\"Name\":\"ID\",\"Value\":\"2787128\"},"+
+							"{\"Name\":\"METHOD\",\"Value\":\"SINGUP\"}"+
+							"],"+
+							"\"_Response\": {\"Code\": 0, \"Desc\": \"OK\"}}";
+		Log.d("TAG",response);
+		
+            
+            // Sends the GET request and reads the Json results.
+            try (InputStream in =
+            		new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
+                 // Create the parser.
+            	//System.out.println(convertStreamToString(in));
+            	JsonParser parser = new JsonParser();
+            	result = parser.parseJsonStream(in);
+            }catch (IOException e) {
+            	Log.d(TAG, "Error reading");
+                e.printStackTrace();
+                return null;
+            }
+        
+       return result;
+    }
     
     
     /**
