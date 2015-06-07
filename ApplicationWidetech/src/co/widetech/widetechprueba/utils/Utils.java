@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,7 +23,7 @@ public class Utils {
     /**
      * Logging tag used by the debugger. 
      */
-    private final static String TAG = Utils.class.getCanonicalName();
+    private final static String TAG = Utils.class.getSimpleName();
 
 
     private final static String sWeb_Service_URL =
@@ -46,7 +46,7 @@ public class Utils {
                 
                 
                 String urlParameters  = requestString;
-				byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+				byte[] postData       = urlParameters.getBytes( Charset.forName("UTF-8") );
 				HttpURLConnection conn= (HttpURLConnection) url.openConnection();           
 				conn.setDoOutput( true );
 				conn.setInstanceFollowRedirects( false );
@@ -55,23 +55,22 @@ public class Utils {
 				conn.setRequestProperty("Accept-Encoding", "UTF-8"); 
 				conn.setRequestProperty("Accept", "application/json"); 
 				conn.setUseCaches( false );
-				try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
+
+					DataOutputStream wr = new DataOutputStream( conn.getOutputStream());
 				   wr.write( postData );
-				}
+				
                 
 				if(conn.getResponseCode()!=HttpURLConnection.HTTP_OK)
 					return null;
-                
                 // Sends the GET request and reads the Json results.
-                try (InputStream in =
-                     new BufferedInputStream(conn.getInputStream())) {
+				InputStream in =
+	                     new BufferedInputStream(conn.getInputStream());
                      // Create the parser.
                 	//System.out.println(convertStreamToString(in));
                 	result = parser.parseJsonStream(in);
-                     
-                } finally {
-                	conn.disconnect();
-                }
+
+                conn.disconnect();
+                
             } catch (IOException e) {
             	Log.d(TAG, "Error reading");
                 e.printStackTrace();
@@ -101,8 +100,9 @@ public class Utils {
 		
             
             // Sends the GET request and reads the Json results.
-            try (InputStream in =
-            		new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
+            try {
+            	InputStream in =
+                		new ByteArrayInputStream(response.getBytes(Charset.forName("UTF-8")));
                  // Create the parser.
             	//System.out.println(convertStreamToString(in));
             	JsonParser parser = new JsonParser();
@@ -146,9 +146,4 @@ public class Utils {
     private Utils() {
         throw new AssertionError();
     } 
-    
-    static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
-    }
 }

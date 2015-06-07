@@ -3,22 +3,17 @@ package co.widetech.widetechprueba.operations;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.telephony.TelephonyManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import co.widetech.widetechprueba.R;
-import co.widetech.widetechprueba.activities.DetailActivity;
+import co.widetech.widetechprueba.activities.SignUpActivity;
 import co.widetech.widetechprueba.to.GP;
 import co.widetech.widetechprueba.to.Main;
 import co.widetech.widetechprueba.to.User;
@@ -26,14 +21,16 @@ import co.widetech.widetechprueba.utils.Utils;
 
 public class SignUpOperations extends Operations {
 
-	WeakReference<EditText> mNameEdit;
-	WeakReference<EditText> mLastNameEdit;
-	WeakReference<EditText> mEmailEdit;
-	WeakReference<EditText> mPasswordEdit;
-	WeakReference<EditText> mPhoneEdit;
+	private WeakReference<EditText> mNameEdit;
+	private WeakReference<EditText> mLastNameEdit;
+	private WeakReference<EditText> mEmailEdit;
+	private WeakReference<EditText> mPasswordEdit;
+	private WeakReference<EditText> mPhoneEdit;
+	private WeakReference<ProgressBar> mProgressBar;
 	
 	private User data;
 	boolean mActive = false;
+	int mLoading = ProgressBar.INVISIBLE;
 	
 	public SignUpOperations(Activity mActivity) {
 		super(mActivity);
@@ -49,9 +46,13 @@ public class SignUpOperations extends Operations {
 			@Override
 			public void execute(View view) {
 				if(!mActive){
-					mActive = true;
-					Main request = buildLoginRequest();
-					callWebService(request);
+					if(isValidForm()){
+						mActive = true;
+						mLoading = ProgressBar.VISIBLE;
+						mProgressBar.get().setVisibility(ProgressBar.VISIBLE);
+						Main request = buildLoginRequest();
+						callWebService(request);
+					}
 				}
 			}
 		});
@@ -72,6 +73,54 @@ public class SignUpOperations extends Operations {
 		
 	}
 
+	protected boolean isValidForm() {
+		String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+		
+		String ALFA_PATTEN = "^[A-Za-z]+$";
+		
+		String NUM_PATTEN = "^[0-9]+$";
+		
+		boolean result = true;
+		Pattern pattern;
+		Matcher matcher;
+
+		pattern = Pattern.compile(ALFA_PATTEN);
+		matcher = pattern.matcher(mNameEdit.get().getText().toString());
+		if(!matcher.matches()){
+			mNameEdit.get().setError("Invalid Format");
+			result = false;
+		}
+		
+		pattern = Pattern.compile(ALFA_PATTEN);
+		matcher = pattern.matcher(mLastNameEdit.get().getText().toString());
+		if(!matcher.matches()){
+			mLastNameEdit.get().setError("Invalid Format");
+			result = false;
+		}
+		
+		pattern = Pattern.compile(EMAIL_PATTERN);
+		matcher = pattern.matcher(mEmailEdit.get().getText().toString());
+		if(!matcher.matches()){
+			mEmailEdit.get().setError("Invalid Format");
+			result = false;
+		}
+		
+		pattern = Pattern.compile(NUM_PATTEN);
+		matcher = pattern.matcher(mPhoneEdit.get().getText().toString());
+		if(!matcher.matches()){
+			mPhoneEdit.get().setError("Invalid Format");
+			result = false;
+		}
+		
+		if(mPasswordEdit.get().getText().toString().isEmpty()){
+			mPasswordEdit.get().setError("Required Field");
+			result = false;
+		}
+		
+		return result;
+	}
+
 	private void initializeViewFields() {
 		getActivity().setContentView(R.layout.activity_signup);
 		
@@ -90,6 +139,8 @@ public class SignUpOperations extends Operations {
 		mPhoneEdit = new WeakReference<EditText>(
 				(EditText)getActivity().findViewById(R.id.phone));
 		
+		mProgressBar = new WeakReference<ProgressBar>(
+				(ProgressBar)getActivity().findViewById(R.id.progress));
 
 	}
 	
@@ -116,7 +167,14 @@ public class SignUpOperations extends Operations {
 			getActivity().setTitle(getActivity().getResources().getString(R.string.signup));
 		}else{
 			getActivity().setTitle(getActivity().getResources().getString(R.string.update));
+			mNameEdit.get().setText(data.getFname());
+			mLastNameEdit.get().setText(data.getLname());
+			mEmailEdit.get().setText(data.getEmail());
+			mEmailEdit.get().setEnabled(false);
+			mPasswordEdit.get().setText(data.getPassword());
+			mPhoneEdit.get().setText(data.getPhone());
 		}
+		mProgressBar.get().setVisibility(mLoading);
 		
 		
 	}
@@ -140,7 +198,7 @@ public class SignUpOperations extends Operations {
 
 		 */ 
 		
-		List<GP> gpList = new ArrayList<>();
+		List<GP> gpList = new ArrayList<GP>();
 		gpList.add(new GP("USR","taxi"));
 		gpList.add(new GP("PASS","taxi"));
 		gpList.add(new GP("CLIENTEID","33047"));
@@ -156,7 +214,7 @@ public class SignUpOperations extends Operations {
 		gpList.add(new GP("PASSWORD",mPasswordEdit.get().getText().toString()));
 		gpList.add(new GP("METHOD","SINGUP"));
 		result.setGP(gpList);
-		
+		data = new User(result);
 		return result;
 	}
 	
@@ -166,7 +224,7 @@ public class SignUpOperations extends Operations {
 
 				@Override
 				protected Main doInBackground(Main... params) {
-					return Utils.callWebServiceDummy(params[0]);
+					return Utils.callWebService(params[0]);
 				}
 				
 				@Override
@@ -182,13 +240,20 @@ public class SignUpOperations extends Operations {
 		{
 			if(result.getResponse().getCode()==0)
 			{
-				getActivity().setResult(Activity.RESULT_OK);
+				data.setId(new User(result).getId());
+				getActivity().setResult(Activity.RESULT_OK,SignUpActivity.makeIntentResult(data));
+				getActivity().finish();
 			}else{
 				showDialogError(result.getResponse().getDesc());
+				mLoading = ProgressBar.INVISIBLE;
+				mProgressBar.get().setVisibility(ProgressBar.INVISIBLE);
 			}
 		}else{
 			Utils.showToast(getActivity(), "Couldnt connect to the server");
+			mLoading = ProgressBar.INVISIBLE;
+			mProgressBar.get().setVisibility(ProgressBar.INVISIBLE);
 		}
+		
 		mActive = false;
 	}
 	
@@ -198,7 +263,5 @@ public class SignUpOperations extends Operations {
 			.setTitle("Error")
 			.setPositiveButton("Ok", null)
 			.create().show();
-		
 	}
-
 }

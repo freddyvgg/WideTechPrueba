@@ -12,16 +12,18 @@ import org.json.JSONObject;
 
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.util.Log;
 import co.widetech.widetechprueba.to.GP;
 import co.widetech.widetechprueba.to.Main;
 import co.widetech.widetechprueba.to.Response;
+import co.widetech.widetechprueba.utils.Utils;
 
 /**
  * Parses the Json weather data returned from the Weather Services API
  * and returns a List of JsonWeather objects that contain this data.
  */
 public class JsonParser {
-
+	private final static String TAG = Utils.class.getSimpleName();
 	
 	
 	public JSONObject parseMainToJson(Main main)
@@ -96,16 +98,18 @@ public class JsonParser {
     public Main parseJsonStream(InputStream inputStream)
         throws IOException {
         // TODO -- you fill in here.
-    	try (JsonReader reader =
+    	JsonReader reader =
                 new JsonReader(new InputStreamReader(inputStream,
-                                                     "UTF-8"))) {
-    		return parseMain(reader);
-    	}
+                                                     "UTF-8"));
+    	
+    	Main result=parseMain(reader);
+    	Log.d(TAG,"Parse: "+result);
+    		return result;
+    	
     }
 
     public Main parseMain(JsonReader reader) 
             throws IOException {
-
     		Main result = new Main();
             reader.beginObject();
             
@@ -113,20 +117,14 @@ public class JsonParser {
             	while(reader.hasNext()){
             		String name = reader.nextName();
             		if(reader.peek()!=JsonToken.NULL){
-	            		switch(name){
-	            			
-	            		case Main.GP_JSON:
+	            		if(name.equals(Main.GP_JSON)){
 	            			result.setGP(parseArrayGP(reader));
-	            			break;
-	            			
-	            		case Main.Response_JSON:
+	            		}else if(name.equals(Main.Response_JSON)){
 	            			result.setResponse(parseResponse(reader));
-	            			break;
-	            		
-	            			default:
+	            		}else{
 	            				reader.skipValue();
-	            				break;
 	            		}
+
             		}else{
             			reader.skipValue();
             		}
@@ -146,7 +144,7 @@ public class JsonParser {
      */
     public List<GP> parseArrayGP(JsonReader reader)
         throws IOException {
-    	
+    	Log.d(TAG,"parseArrayGP");
         // TODO -- you fill in here.
     	List<GP> result = new ArrayList<GP>();
     	if(reader.peek()==JsonToken.BEGIN_ARRAY){
@@ -171,7 +169,7 @@ public class JsonParser {
     
     public GP parseGP(JsonReader reader) 
             throws IOException {
-
+    	Log.d(TAG,"parseGP");
     	GP result = new GP();
             reader.beginObject();
             
@@ -179,20 +177,13 @@ public class JsonParser {
             	while(reader.hasNext()){
             		String name = reader.nextName();
             		if(reader.peek()!=JsonToken.NULL){
-	            		switch(name){
-	            			
-	            		case GP.Name_JSON:
+            			if(name.equals(GP.Name_JSON))
 	            			result.setName(reader.nextString());
-	            			break;
-	            			
-	            		case GP.Value_JSON:
+            			else if(name.equals(GP.Value_JSON))
 	            			result.setValue(reader.nextString());
-	            			break;
-	            		
-	            			default:
-	            				reader.skipValue();
-	            				break;
-	            		}
+            			else
+            				reader.skipValue();
+	
 	            	}else{
 	        			reader.skipValue();
 	        		}
@@ -208,7 +199,7 @@ public class JsonParser {
     
     public Response parseResponse(JsonReader reader) 
             throws IOException {
-
+    	Log.d(TAG,"parseResponse");
     	Response result = new Response();
             reader.beginObject();
             
@@ -216,20 +207,13 @@ public class JsonParser {
             	while(reader.hasNext()){
             		String name = reader.nextName();
             		if(reader.peek()!=JsonToken.NULL){
-	            		switch(name){
-	            			
-	            		case Response.Code_JSON:
+            			if(name.equals(Response.Code_JSON))
 	            			result.setCode(reader.nextInt());
-	            			break;
-	            			
-	            		case Response.Desc_JSON:
+            			else if(name.equals(Response.Desc_JSON))
 	            			result.setDesc(reader.nextString());
-	            			break;
-	            		
-	            			default:
-	            				reader.skipValue();
-	            				break;
-	            		}
+            			else
+	            			reader.skipValue();
+
 	            	}else{
 	        			reader.skipValue();
 	        		}

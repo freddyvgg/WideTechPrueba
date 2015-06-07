@@ -1,5 +1,6 @@
 package co.widetech.widetechprueba.to;
 
+import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,6 +13,7 @@ public class User implements Parcelable{
 	public static final String LASTNAME = "LASTNAME";
 	public static final String PHONE = "PHONE";
 	public static final String EMAIL = "EMAIL";
+	public static final String MAIL = "MAIL";
 	public static final String ADDRESS = "ADDRESS";
 	public static final String PASSWORD = "PASSWORD";
 	
@@ -76,37 +78,27 @@ public class User implements Parcelable{
 		this.password = in.readString();
 	}
 	
+	@SuppressLint("DefaultLocale")
 	public User(Main main)
 	{
 		
 		for(GP gp: main.getGP())
 		{
-			switch(gp.getName())
-			{
-				case ID:
-					this.id = gp.getValue();
-					break;
-				case FNAME:
-				case NAME:
-					this.fname = gp.getValue();
-					break;
-				case LNAME:
-				case LASTNAME:
-					this.lname = gp.getValue();
-					break;
-				case PHONE:
-					this.phone = gp.getValue();
-					break;
-				case EMAIL:
-					this.email = gp.getValue();
-					break;
-				case ADDRESS:
-					this.address = gp.getValue();
-					break;
-				case PASSWORD:
-					this.password = gp.getValue();
-					break;
-			}
+			if(gp.getName().equals(ID))
+				this.id = gp.getValue();
+			else if(gp.getName().equals(FNAME)||gp.getName().equals(NAME))
+				this.fname = gp.getValue().toUpperCase();
+			else if(gp.getName().equals(LNAME)||gp.getName().equals(LASTNAME))
+				this.lname = gp.getValue().toUpperCase();
+			else if(gp.getName().equals(PHONE))
+				this.phone = gp.getValue();
+			else if(gp.getName().equals(MAIL)||gp.getName().equals(EMAIL))
+				this.email = gp.getValue();
+			else if(gp.getName().equals(ADDRESS))
+				this.address = gp.getValue();
+			else if(gp.getName().equals(PASSWORD))
+				this.password = gp.getValue();
+
 		}
 	}
 

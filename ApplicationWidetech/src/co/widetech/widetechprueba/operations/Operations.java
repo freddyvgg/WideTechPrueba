@@ -3,6 +3,7 @@ package co.widetech.widetechprueba.operations;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -16,9 +17,9 @@ public abstract class Operations {
 	
 	protected WeakReference<Activity> mActivity;
 	
-	protected SparseArray<ButtonCommand> mButtonCommands = new SparseArray<>();
+	protected SparseArray<ButtonCommand> mButtonCommands = new SparseArray<ButtonCommand>();
 	
-	protected SparseArray<MenuCommand> mMenuCommands = new SparseArray<>();
+	protected SparseArray<MenuCommand> mMenuCommands = new SparseArray<MenuCommand>();
 	
 	public Operations(Activity mActivity) {
 		super();
@@ -94,6 +95,11 @@ public abstract class Operations {
 	
 	protected interface MenuCommand {
 		void execute(MenuItem item);
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		//no-op
+		
 	}
 
 	

@@ -1,13 +1,12 @@
 
 package co.widetech.widetechprueba.to;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Main implements Serializable {
+public class Main {
 	
 	public static final String GP_JSON = "GP";
 	public static final String Response_JSON = "_Response";
@@ -59,5 +58,12 @@ public class Main implements Serializable {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
+	@Override
+	public String toString() {
+		return "Main [GP=" + GP + ", Response=" + Response + "]";
+	}
+    
+    
 
 }

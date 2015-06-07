@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +24,6 @@ public class DetailActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("Detail", "onCreate");
 		super.onCreate(savedInstanceState);
 		handleConfigurationChanges();
 	}
@@ -75,6 +71,13 @@ public class DetailActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		mOperations.onBackPressed();
+	}
+	
+	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		mOperations.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public static Intent makeIntent(Context context, User user) {

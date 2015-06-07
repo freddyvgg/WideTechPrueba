@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import co.widetech.widetechprueba.operations.Operations;
 import co.widetech.widetechprueba.operations.SignUpOperations;
@@ -23,7 +22,6 @@ public class SignUpActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("SignUpActivity", "onCreate");
 		super.onCreate(savedInstanceState);
 		handleConfigurationChanges();
 	}
@@ -56,6 +54,13 @@ public class SignUpActivity extends Activity {
 	public static Intent makeIntent(Context context, User user) {
 		Intent intent = new Intent(VIEW_SIGNUP_ACTION);
 		intent.putExtra("USER", user);
+		return intent;
+	}
+	
+	public static Intent makeIntentResult(User user) {
+		Intent intent = new Intent();
+		intent.putExtra("USER", user);
+		
 		return intent;
 	}
 

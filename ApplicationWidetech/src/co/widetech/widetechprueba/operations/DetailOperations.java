@@ -5,17 +5,25 @@ import java.lang.ref.WeakReference;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import co.widetech.widetechprueba.R;
+import co.widetech.widetechprueba.activities.SignUpActivity;
 import co.widetech.widetechprueba.to.User;
+import co.widetech.widetechprueba.utils.Utils;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 
 public class DetailOperations extends Operations {
 
-	private WeakReference<TextView> mResultText;
 	private User data;
+	private boolean mActive;
+	public static final int SIGNUP_REQUEST = 0x001;
+	
+    private WeakReference<GoogleMap> mMap;
 	
 	public DetailOperations(Activity mActivity) {
 		super(mActivity);
@@ -30,8 +38,11 @@ public class DetailOperations extends Operations {
 
 			@Override
 			public void execute(MenuItem item) {
-				// TODO Auto-generated method stub
-				
+				if(!mActive){
+					mActive = true;
+					Intent intent = SignUpActivity.makeIntent(getActivity(), data);
+					getActivity().startActivityForResult(intent, SIGNUP_REQUEST);
+				}
 			}
 		});
 		
@@ -39,7 +50,11 @@ public class DetailOperations extends Operations {
 
 			@Override
 			public void execute(MenuItem item) {
-				logout();
+				if(!mActive){
+					mActive = true;
+					logout();
+					mActive = false;
+				}
 			}
 		});
 		
@@ -48,8 +63,8 @@ public class DetailOperations extends Operations {
 	private void initializeViewFields() {
 		getActivity().setContentView(R.layout.activity_detail);
 		
-		mResultText = new WeakReference<TextView>((TextView)getActivity()
-									.findViewById(R.id.result));
+		mMap = new WeakReference<GoogleMap>(((MapFragment) getActivity().getFragmentManager().findFragmentById(
+				R.id.map)).getMap());
 
 	}
 	
@@ -72,8 +87,8 @@ public class DetailOperations extends Operations {
 	
 	private void refreshActivity() {
 		getActivity().setTitle(data.getFname()+" "+data.getLname());
-		mResultText.get().setText(data.toString());
-		
+		mMap.get().setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		mMap.get().setMyLocationEnabled(true);
 	}
 
 	@Override
@@ -107,6 +122,20 @@ public class DetailOperations extends Operations {
 	
 	}
 	
-	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode==SIGNUP_REQUEST)
+		{
+			if(resultCode==Activity.RESULT_OK)
+			{
+				Utils.showToast(getActivity(), "Successed");
+				this.data = (User) data.getParcelableExtra("USER");
+				refreshActivity();
+			}else if(requestCode==Activity.RESULT_CANCELED){
+				Utils.showToast(getActivity(), "Canceled");
+			}
+			mActive=false;
+		}
+	}
 
 }
